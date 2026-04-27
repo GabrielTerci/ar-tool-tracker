@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Tool Tracker</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h2 class="sr-only">AR Tool Tracking System — interactive prototype for check-out, check-in, and backend logging</h2>
+
+  <div class="shell">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>Tool Inventory</h2>
+        <div class="session-info">Session <span class="session-id" id="session-id">—</span></div>
+        <div class="session-info" style="margin-top:2px">Technician: <strong>G. Terci</strong></div>
+      </div>
+      <div class="tool-list" id="tool-list"></div>
+    </div>
+
+    <div class="main">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('scan')">AR Scanner</div>
+        <div class="tab" onclick="switchTab('checkin')">Check-in</div>
+        <div class="tab" onclick="switchTab('log')">Event Log</div>
+      </div>
+
+      <div class="panel active" id="panel-scan">
+        <div style="margin-bottom:14px">
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-label">Checked out</div>
+              <div class="stat-value green" id="stat-out">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Checked in</div>
+              <div class="stat-value blue" id="stat-in">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Unresolved</div>
+              <div class="stat-value orange" id="stat-missing">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ar-viewport" id="ar-viewport">
+          <div class="ar-scanlines"></div>
+          <div class="ar-corner tl"></div>
+          <div class="ar-corner tr"></div>
+          <div class="ar-corner bl"></div>
+          <div class="ar-corner br"></div>
+          <div class="ar-overlay-badge" id="mode-badge">MODE: CHECK-OUT</div>
+          <div class="scan-target">
+            <div class="scan-line" id="scan-line"></div>
+            <div class="ar-prompt" id="ar-prompt">READY TO SCAN</div>
+            <div class="ar-sub" id="ar-sub">Select a tool below and press Scan</div>
+          </div>
+          <div class="ar-result-overlay" id="ar-result">
+            <div class="ar-result-icon" id="ar-icon"></div>
+            <div class="ar-result-text" id="ar-text"></div>
+            <div class="ar-result-sub" id="ar-sub2"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px">
+          <div class="field-row">
+            <div class="field">
+              <label>Tool</label>
+              <select id="tool-select"></select>
+            </div>
+            <div class="field">
+              <label>Technician ID</label>
+              <input type="text" value="TECH-001" id="tech-id">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Work Order</label>
+              <input type="text" value="WO-2024-042" id="work-order">
+            </div>
+            <div class="field">
+              <label>Location</label>
+              <select id="location-select">
+                <option>Depot A — Bay 3</option>
+                <option>Depot B — Bay 1</option>
+                <option>Platform 2</option>
+                <option>Workshop</option>
+              </select>
+            </div>
+          </div>
+          <div class="controls">
+            <button class="btn primary" onclick="doScan()">Scan Tool</button>
+            <button class="btn" onclick="toggleMode()">Switch to Check-in</button>
+            <button class="btn danger" onclick="simulateError('missing')">Sim: Missing Tool</button>
+            <button class="btn danger" onclick="simulateError('duplicate')">Sim: Duplicate Scan</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-checkin">
+        <div class="section-head">Active session — tools checked out</div>
+        <div id="checkin-list"></div>
+        <div style="margin-top:16px">
+          <button class="btn primary" onclick="completeCheckin()">Validate & Complete Check-in</button>
+          <button class="btn" style="margin-left:6px" onclick="refreshCheckin()">Refresh</button>
+        </div>
+        <div id="checkin-result" style="margin-top:12px;font-size:13px;"></div>
+      </div>
+
+      <div class="panel" id="panel-log">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="section-head" style="margin:0">Backend event log</div>
+          <button class="btn" onclick="clearLog()">Clear</button>
+        </div>
+        <div id="event-log"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

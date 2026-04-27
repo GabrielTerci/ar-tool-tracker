@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Tool Status Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            padding: 30px;
+            color: #1f2937;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        .available {
+            color: green;
+            font-weight: bold;
+        }
+
+        .checked-out {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .checked-in {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .missing {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tool Status Dashboard</h1>
+
+    <div class="stats">
+        <div class="card">
+            <div>Total</div>
+            <div class="value" id="total">0</div>
+        </div>
+        <div class="card">
+            <div>Checked Out</div>
+            <div class="value" id="checkedOut">0</div>
+        </div>
+        <div class="card">
+            <div>Available</div>
+            <div class="value" id="available">0</div>
+        </div>
+        <div class="card">
+            <div>Missing</div>
+            <div class="value" id="missing">0</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tool ID</th>
+                <th>Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="table"></tbody>
+    </table>
+
+    <script>
+        async function loadData() {
+            const res = await fetch('/tools/status');
+            const data = await res.json();
+
+            document.getElementById('total').textContent = data.totalTools;
+            document.getElementById('checkedOut').textContent = data.checkedOut;
+            document.getElementById('available').textContent = data.available;
+            document.getElementById('missing').textContent = data.missing;
+
+            const table = document.getElementById('table');
+            table.innerHTML = '';
+
+            data.tools.forEach(tool => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+          <td>${tool.id}</td>
+          <td>${tool.name}</td>
+          <td class="${tool.status}">${tool.status}</td>
+        `;
+
+                table.appendChild(row);
+            });
+        }
+
+        loadData();
+        setInterval(loadData, 2000)
+    </script>
+</body>
+
+</html>
